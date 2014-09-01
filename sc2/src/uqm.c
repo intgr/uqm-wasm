@@ -59,7 +59,7 @@
 
 
 #if defined (GFXMODULE_SDL)
-#	include SDL_INCLUDE(SDL.h)
+#	include <SDL.h>
 			// Including this is actually necessary on OSX.
 #endif
 

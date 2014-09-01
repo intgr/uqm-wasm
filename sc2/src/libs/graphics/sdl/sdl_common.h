@@ -20,9 +20,9 @@
 #define SDL_COMMON_H
 
 #include "port.h"
-#include SDL_INCLUDE(SDL.h)
-#include SDL_INCLUDE(SDL_endian.h)
-#include SDL_IMAGE_INCLUDE(SDL_image.h)
+#include <SDL.h>
+#include <SDL_endian.h>
+#include <SDL_image.h>
 
 #include "../gfxintrn.h"
 #include "libs/graphics/tfb_draw.h"

@@ -18,7 +18,7 @@
 #include <string.h>
 		// for memcpy()
 
-#include SDL_INCLUDE(SDL.h)
+#include <SDL.h>
 #include "sdl_common.h"
 #include "libs/graphics/gfx_common.h"
 #include "libs/graphics/tfb_draw.h"

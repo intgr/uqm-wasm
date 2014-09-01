@@ -18,7 +18,7 @@
 #define _VCONTROL_H_
 
 #include "port.h"
-#include SDL_INCLUDE(SDL.h)
+#include <SDL.h>
 
 /* Initialization routines */
 void VControl_Init (void);

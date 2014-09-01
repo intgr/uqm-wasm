@@ -24,7 +24,7 @@
 #ifdef USE_PLATFORM_ACCEL
 #	ifndef __APPLE__
 	// MacOS X framework has no SDL_cpuinfo.h for some reason
-#		include SDL_INCLUDE(SDL_cpuinfo.h)
+#		include <SDL_cpuinfo.h>
 #	endif
 #	ifdef MMX_ASM
 #		include "2xscalers_mmx.h"
