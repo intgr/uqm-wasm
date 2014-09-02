@@ -528,16 +528,7 @@ blt_prim(SDL_Surface *src, SDL_Rect src_r, RenderPixelFn plot, int factor,
 		src_r.h = src->h - src_r.y;
 
 	// use colorkeys where appropriate
-	if (srcfmt->Amask)
-	{	// alpha transparency
-		mask = srcfmt->Amask;
-		key = 0;
-	}
-	else if (src->flags & SDL_SRCCOLORKEY)
-	{	// colorkey transparency
-		mask = ~srcfmt->Amask;
-		key = srcfmt->colorkey & mask;
-	}
+	TBF_DrawCanvas_GetColorkeyAlphamask (src, &mask, &key);
 
 	// TODO: calculate the source and destination pointers directly
 	//   instead of using the plot(x,y) version

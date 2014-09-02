@@ -47,6 +47,7 @@ extern SDL_Surface *SDL_Screens[TFB_GFX_NUMSCREENS];
 extern SDL_Surface *format_conv_surf;
 
 SDL_Surface* TFB_DisplayFormatAlpha (SDL_Surface *surface);
+void TBF_DrawCanvas_GetColorkeyAlphamask (SDL_Surface *surface, Uint32* mask, Uint32* colorkey);
 
 SDL_Surface* Create_Screen (SDL_Surface *templat, int w, int h);
 int ReInit_Screen (SDL_Surface **screen, SDL_Surface *templat, int w, int h);
@@ -56,6 +57,7 @@ void UnInit_Screen (SDL_Surface **screen);
 #if !SDL_VERSION_ATLEAST(1,3,0)
 # define SDL_WINDOW_FULLSCREEN SDL_FULLSCREEN
 # define SDL_WINDOW_OPENGL SDL_OPENGL
+int SDL_GetColorKey(SDL_Surface *surface, Uint32 *key);
 #else
 // When calling SDL_SetColorKey(), you should pass SDL_TRUE instead of SDL_SRCCOLORKEY.
 # define SDL_SRCCOLORKEY SDL_TRUE

@@ -34,6 +34,7 @@
 #include "libs/memlib.h"
 #include "libs/vidlib.h"
 #include <SDL_thread.h>
+#include <SDL/SDL_video.h>
 
 SDL_Surface *SDL_Video;
 SDL_Surface *SDL_Screen;
@@ -311,6 +312,18 @@ TFB_SwapBuffers (int force_full_redraw)
 	graphics_backend->postprocess ();
 }
 
+#if !SDL_VERSION_ATLEAST(1,3,0)
+int SDL_GetColorKey(SDL_Surface *surface, Uint32 *colorkey)
+{
+	if (surface->flags & SDL_SRCCOLORKEY)
+	{
+		*colorkey = surface->format->colorkey;
+		return 0;
+	}
+	return -1;
+}
+#endif
+
 /* Probably ought to clean this away at some point. */
 SDL_Surface *
 TFB_DisplayFormatAlpha (SDL_Surface *surface)
@@ -318,6 +331,7 @@ TFB_DisplayFormatAlpha (SDL_Surface *surface)
 	SDL_Surface* newsurf;
 	SDL_PixelFormat* dstfmt;
 	const SDL_PixelFormat* srcfmt = surface->format;
+	Uint32 junk;
 	
 	// figure out what format to use (alpha/no alpha)
 	if (surface->format->Amask)
@@ -335,12 +349,28 @@ TFB_DisplayFormatAlpha (SDL_Surface *surface)
 	newsurf = SDL_ConvertSurface (surface, dstfmt, surface->flags);
 	// SDL_SRCCOLORKEY and SDL_SRCALPHA cannot work at the same time,
 	// so we need to disable one of them
-	if ((surface->flags & SDL_SRCCOLORKEY) && newsurf
-			&& (newsurf->flags & SDL_SRCCOLORKEY)
+	if (SDL_GetColorKey(surface, &junk) == 0 && newsurf
+			&& (SDL_GetColorKey(newsurf, &junk) == 0)
 			&& (newsurf->flags & SDL_SRCALPHA))
 		SDL_SetAlpha (newsurf, 0, 255);
 
 	return newsurf;
+}
+
+void
+TBF_DrawCanvas_GetColorkeyAlphamask (SDL_Surface *surface, Uint32* mask, Uint32* colorkey)
+{
+	const SDL_PixelFormat *fmt = surface->format;
+
+	if (fmt->Amask)
+	{	// alpha transparency
+		*mask = fmt->Amask;
+		*colorkey = 0;
+	}
+	else if (SDL_GetColorKey(surface, colorkey) == 0)
+	{	// colorkey transparency
+		*mask = ~fmt->Amask;
+	}
 }
 
 // This function should only be called from the graphics thread,

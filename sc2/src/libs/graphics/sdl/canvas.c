@@ -112,10 +112,11 @@ TFB_DrawCanvas_Rect (RECT *rect, Color color, DrawMode mode, TFB_Canvas target)
 
 	if (mode.kind == DRAW_REPLACE)
 	{	// Standard SDL fillrect rendering
-		if (fmt->Amask && (dst->flags & SDL_SRCCOLORKEY))
+		Uint32 colorkey;
+		if (SDL_GetColorKey(dst, &colorkey) == 0)
 		{	// special case -- alpha surface with colorkey
 			// colorkey rects are transparent
-			if ((sdlColor & ~fmt->Amask) == (fmt->colorkey & ~fmt->Amask))
+			if ((sdlColor & ~fmt->Amask) == (colorkey & ~fmt->Amask))
 				sdlColor &= ~fmt->Amask; // make transparent
 		}
 		SDL_FillRect (dst, &sr, sdlColor);
@@ -285,6 +286,7 @@ TFB_DrawCanvas_Fill (SDL_Surface *src, Uint32 fillcolor, SDL_Surface *dst)
 	Uint32 *src_p;
 	Uint32 *dst_p;
 	int x, y;
+	Uint32 srckey;
 	Uint32 dstkey = 0; // 0 means alpha=0 too
 	Uint32 amask = srcfmt->Amask;
 	int alpha = (fillcolor & amask) >> srcfmt->Ashift;
@@ -339,10 +341,8 @@ TFB_DrawCanvas_Fill (SDL_Surface *src, Uint32 fillcolor, SDL_Surface *dst)
 			}
 		}
 	}
-	else if (src->flags & SDL_SRCCOLORKEY)
-	{	// colorkey-based fill
-		Uint32 srckey = srcfmt->colorkey;
-
+	else if (SDL_GetColorKey(dst, &srckey) == 0)
+	{
 		for (y = 0; y < height; ++y, dst_p += ddst, src_p += dsrc)
 		{
 			for (x = 0; x < width; ++x, ++src_p, ++dst_p)
@@ -894,8 +894,9 @@ TFB_DrawCanvas_SetPalette (TFB_Canvas target, Color palette[256])
 int
 TFB_DrawCanvas_GetTransparentIndex (TFB_Canvas canvas)
 {
-	if (((SDL_Surface *)canvas)->flags & SDL_SRCCOLORKEY)
-		return ((SDL_Surface *)canvas)->format->colorkey;
+	Uint32 colorkey;
+	if (SDL_GetColorKey((SDL_Surface *)canvas, &colorkey) == 0)
+		return colorkey;
 	return -1;
 }
 
@@ -944,11 +945,12 @@ TFB_DrawCanvas_CopyTransparencyInfo (TFB_Canvas src_canvas,
 BOOLEAN
 TFB_DrawCanvas_GetTransparentColor (TFB_Canvas canvas, Color *color)
 {
+	Uint32 colorkey;
+
 	if (!TFB_DrawCanvas_IsPaletted (canvas)
-			&& (((SDL_Surface *)canvas)->flags & SDL_SRCCOLORKEY) )
+			&& SDL_GetColorKey((SDL_Surface *)canvas, &colorkey) == 0)
 	{
 		Uint8 ur, ug, ub;
-		int colorkey = ((SDL_Surface *)canvas)->format->colorkey;
 		SDL_GetRGB (colorkey, ((SDL_Surface *)canvas)->format, &ur, &ug, &ub);
 		color->r = ur;
 		color->g = ug;
@@ -1284,9 +1286,8 @@ TFB_DrawCanvas_Rescale_Trilinear (TFB_Canvas src_canvas, TFB_Canvas src_mipmap,
 	const int slen = src->pitch;
 	const int mmlen = mm->pitch;
 	const int dst_has_alpha = (dstfmt->Amask != 0);
-	const int transparent = (dst->flags & SDL_SRCCOLORKEY) ?
-			dstfmt->colorkey : 0;
 	const int alpha_threshold = dst_has_alpha ? 0 : 127;
+	Uint32 transparent;
 	// src v. mipmap importance factor
 	int ratio = scale * 2 - GSCALE_IDENTITY;
 	// source masks and keys
@@ -1298,6 +1299,9 @@ TFB_DrawCanvas_Rescale_Trilinear (TFB_Canvas src_canvas, TFB_Canvas src_mipmap,
 	// source fractional x and y starting points
 	int ssx0 = 0, ssy0 = 0, ssx1 = 0, ssy1 = 0;
 	int x, y, w, h;
+
+	if (SDL_GetColorKey(dst, &transparent) != 0)
+		transparent = 0;
 
 	if (mmfmt->palette && !srcpal) 
 	{
@@ -1380,27 +1384,8 @@ TFB_DrawCanvas_Rescale_Trilinear (TFB_Canvas src_canvas, TFB_Canvas src_mipmap,
 	}
 
 	// use colorkeys where appropriate
-	if (srcfmt->Amask)
-	{	// alpha transparency
-		mk0 = srcfmt->Amask;
-		ck0 = 0;
-	}
-	else if (src->flags & SDL_SRCCOLORKEY)
-	{	// colorkey transparency
-		mk0 = ~srcfmt->Amask;
-		ck0 = srcfmt->colorkey & mk0;
-	}
-
-	if (mmfmt->Amask)
-	{	// alpha transparency
-		mk1 = mmfmt->Amask;
-		ck1 = 0;
-	}
-	else if (mm->flags & SDL_SRCCOLORKEY)
-	{	// colorkey transparency
-		mk1 = ~mmfmt->Amask;
-		ck1 = mmfmt->colorkey & mk1;
-	}
+	TBF_DrawCanvas_GetColorkeyAlphamask (src, &mk0, &ck0);
+	TBF_DrawCanvas_GetColorkeyAlphamask (mm, &mk1, &ck1);
 
 	SDL_LockSurface(src);
 	SDL_LockSurface(dst);
@@ -1598,9 +1583,8 @@ TFB_DrawCanvas_Rescale_Bilinear (TFB_Canvas src_canvas, TFB_Canvas dst_canvas,
 	const int sbpp = srcfmt->BytesPerPixel;
 	const int slen = src->pitch;
 	const int dst_has_alpha = (dstfmt->Amask != 0);
-	const int transparent = (dst->flags & SDL_SRCCOLORKEY) ?
-			dstfmt->colorkey : 0;
 	const int alpha_threshold = dst_has_alpha ? 0 : 127;
+	Uint32 transparent;
 	// source masks and keys
 	Uint32 mk = 0, ck = ~0;
 	// source fractional x and y positions
@@ -1610,6 +1594,9 @@ TFB_DrawCanvas_Rescale_Bilinear (TFB_Canvas src_canvas, TFB_Canvas dst_canvas,
 	// source fractional x and y starting points
 	int ssx = 0, ssy = 0;
 	int x, y, w, h;
+
+	if (SDL_GetColorKey(dst, &transparent) != 0)
+		transparent = 0;
 
 	if (scale > 0)
 	{
@@ -1658,16 +1645,7 @@ TFB_DrawCanvas_Rescale_Bilinear (TFB_Canvas src_canvas, TFB_Canvas dst_canvas,
 	}
 
 	// use colorkeys where appropriate
-	if (srcfmt->Amask)
-	{	// alpha transparency
-		mk = srcfmt->Amask;
-		ck = 0;
-	}
-	else if (src->flags & SDL_SRCCOLORKEY)
-	{	// colorkey transparency
-		mk = ~srcfmt->Amask;
-		ck = srcfmt->colorkey & mk;
-	}
+	TBF_DrawCanvas_GetColorkeyAlphamask (src, &mk, &ck);
 
 	SDL_LockSurface(src);
 	SDL_LockSurface(dst);
@@ -1969,29 +1947,8 @@ TFB_DrawCanvas_Intersect (TFB_Canvas canvas1, POINT c1org,
 	getpixel1 = getpixel_for (surf1);
 	getpixel2 = getpixel_for (surf2);
 
-	if (surf1->format->Amask)
-	{	// use alpha transparency info
-		s1mask = surf1->format->Amask;
-		// consider any not fully transparent pixel collidable
-		s1key = 0;
-	}
-	else
-	{	// colorkey transparency
-		s1mask = ~surf1->format->Amask;
-		s1key = surf1->format->colorkey & s1mask;
-	}
-
-	if (surf2->format->Amask)
-	{	// use alpha transparency info
-		s2mask = surf2->format->Amask;
-		// consider any not fully transparent pixel collidable
-		s2key = 0;
-	}
-	else
-	{	// colorkey transparency
-		s2mask = ~surf2->format->Amask;
-		s2key = surf2->format->colorkey & s2mask;
-	}
+	TBF_DrawCanvas_GetColorkeyAlphamask (surf1, &s1mask, &s1key);
+	TBF_DrawCanvas_GetColorkeyAlphamask (surf2, &s2mask, &s2key);
 
 	// convert surface origins to pixel offsets within
 	c1org.x = interRect->corner.x - c1org.x;
