@@ -343,6 +343,30 @@ TFB_DisplayFormatAlpha (SDL_Surface *surface)
 	return newsurf;
 }
 
+void
+TBF_DrawCanvas_GetColorkeyAlphamask (SDL_Surface *surface, Uint32* mask, Uint32* colorkey)
+{
+	const SDL_PixelFormat *fmt = surface->format;
+
+	if (fmt->Amask)
+	{	// alpha transparency
+		*mask = fmt->Amask;
+		*colorkey = 0;
+	}
+#if SDL_VERSION_ATLEAST(1,3,0)
+	else if (SDL_GetColorKey(surface, colorkey) != -1)
+	{	// colorkey transparency
+		*mask = ~fmt->Amask;
+	}
+#else
+	else if (surface->flags & SDL_SRCCOLORKEY)
+	{	// colorkey transparency
+		*mask = ~fmt->Amask;
+		*colorkey = fmt->colorkey & mask;
+	}
+#endif
+}
+
 // This function should only be called from the graphics thread,
 // like from a TFB_DrawCommand_Callback command.
 TFB_Canvas

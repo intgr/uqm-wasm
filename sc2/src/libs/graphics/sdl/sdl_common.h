@@ -47,6 +47,7 @@ extern SDL_Surface *SDL_Screens[TFB_GFX_NUMSCREENS];
 extern SDL_Surface *format_conv_surf;
 
 SDL_Surface* TFB_DisplayFormatAlpha (SDL_Surface *surface);
+void TBF_DrawCanvas_GetColorkeyAlphamask (SDL_Surface *surface, Uint32* mask, Uint32* colorkey);
 
 SDL_Surface* Create_Screen (SDL_Surface *templat, int w, int h);
 int ReInit_Screen (SDL_Surface **screen, SDL_Surface *templat, int w, int h);

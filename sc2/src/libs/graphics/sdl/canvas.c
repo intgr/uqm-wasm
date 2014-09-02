@@ -894,9 +894,16 @@ TFB_DrawCanvas_SetPalette (TFB_Canvas target, Color palette[256])
 int
 TFB_DrawCanvas_GetTransparentIndex (TFB_Canvas canvas)
 {
+#if SDL_VERSION_ATLEAST(1,3,0)
+	Uint32 colorkey;
+	if (SDL_GetColorKey((SDL_Surface *)canvas, &colorkey) == -1)
+		return -1;
+	return colorkey;
+#else
 	if (((SDL_Surface *)canvas)->flags & SDL_SRCCOLORKEY)
 		return ((SDL_Surface *)canvas)->format->colorkey;
 	return -1;
+#endif
 }
 
 void
@@ -1380,27 +1387,8 @@ TFB_DrawCanvas_Rescale_Trilinear (TFB_Canvas src_canvas, TFB_Canvas src_mipmap,
 	}
 
 	// use colorkeys where appropriate
-	if (srcfmt->Amask)
-	{	// alpha transparency
-		mk0 = srcfmt->Amask;
-		ck0 = 0;
-	}
-	else if (src->flags & SDL_SRCCOLORKEY)
-	{	// colorkey transparency
-		mk0 = ~srcfmt->Amask;
-		ck0 = srcfmt->colorkey & mk0;
-	}
-
-	if (mmfmt->Amask)
-	{	// alpha transparency
-		mk1 = mmfmt->Amask;
-		ck1 = 0;
-	}
-	else if (mm->flags & SDL_SRCCOLORKEY)
-	{	// colorkey transparency
-		mk1 = ~mmfmt->Amask;
-		ck1 = mmfmt->colorkey & mk1;
-	}
+	TBF_DrawCanvas_GetColorkeyAlphamask (src, &mk0, &ck0);
+	TBF_DrawCanvas_GetColorkeyAlphamask (mm, &mk1, &ck1);
 
 	SDL_LockSurface(src);
 	SDL_LockSurface(dst);
@@ -1658,16 +1646,7 @@ TFB_DrawCanvas_Rescale_Bilinear (TFB_Canvas src_canvas, TFB_Canvas dst_canvas,
 	}
 
 	// use colorkeys where appropriate
-	if (srcfmt->Amask)
-	{	// alpha transparency
-		mk = srcfmt->Amask;
-		ck = 0;
-	}
-	else if (src->flags & SDL_SRCCOLORKEY)
-	{	// colorkey transparency
-		mk = ~srcfmt->Amask;
-		ck = srcfmt->colorkey & mk;
-	}
+	TBF_DrawCanvas_GetColorkeyAlphamask (src, &mk, &ck);
 
 	SDL_LockSurface(src);
 	SDL_LockSurface(dst);
@@ -1969,29 +1948,8 @@ TFB_DrawCanvas_Intersect (TFB_Canvas canvas1, POINT c1org,
 	getpixel1 = getpixel_for (surf1);
 	getpixel2 = getpixel_for (surf2);
 
-	if (surf1->format->Amask)
-	{	// use alpha transparency info
-		s1mask = surf1->format->Amask;
-		// consider any not fully transparent pixel collidable
-		s1key = 0;
-	}
-	else
-	{	// colorkey transparency
-		s1mask = ~surf1->format->Amask;
-		s1key = surf1->format->colorkey & s1mask;
-	}
-
-	if (surf2->format->Amask)
-	{	// use alpha transparency info
-		s2mask = surf2->format->Amask;
-		// consider any not fully transparent pixel collidable
-		s2key = 0;
-	}
-	else
-	{	// colorkey transparency
-		s2mask = ~surf2->format->Amask;
-		s2key = surf2->format->colorkey & s2mask;
-	}
+	TBF_DrawCanvas_GetColorkeyAlphamask (surf1, &s1mask, &s1key);
+	TBF_DrawCanvas_GetColorkeyAlphamask (surf2, &s2mask, &s2key);
 
 	// convert surface origins to pixel offsets within
 	c1org.x = interRect->corner.x - c1org.x;
