@@ -108,13 +108,32 @@ AttemptColorDepth (int flags, int width, int height, int bpp)
 	SDL_GL_SetAttribute (SDL_GL_DEPTH_SIZE, 0);
 	SDL_GL_SetAttribute (SDL_GL_DOUBLEBUFFER, 1);
 
-	videomode_flags = SDL_OPENGL;
+	videomode_flags = SDL_WINDOW_OPENGL;
 	if (flags & TFB_GFXFLAGS_FULLSCREEN)
-		videomode_flags |= SDL_FULLSCREEN;
-	videomode_flags |= SDL_ANYFORMAT;
+		videomode_flags |= SDL_WINDOW_FULLSCREEN;
 
-	SDL_Video = SDL_SetVideoMode (ScreenWidthActual, ScreenHeightActual, 
+#if SDL_VERSION_ATLEAST(1,3,0)
+	// FIXME WTF
+	SDL_Window *win = SDL_CreateWindow("Foobar",
+		SDL_WINDOWPOS_UNDEFINED,
+		SDL_WINDOWPOS_UNDEFINED,
+		ScreenWidthActual, ScreenHeightActual,
+		videomode_flags);
+	SDL_Video = SDL_CreateRGBSurface(0, 640, 480, 32,
+		0x00FF0000,
+		0x0000FF00,
+		0x000000FF,
+		0xFF000000);
+	SDL_Renderer *renderer = SDL_CreateRenderer(win, -1, 0);
+	SDL_Texture *txt = SDL_CreateTexture(renderer,
+		SDL_PIXELFORMAT_ARGB8888,
+		SDL_TEXTUREACCESS_STREAMING,
+		640, 480);
+#else
+	videomode_flags |= SDL_ANYFORMAT;
+	SDL_Video = SDL_SetVideoMode (ScreenWidthActual, ScreenHeightActual,
 		bpp, videomode_flags);
+#endif
 	if (SDL_Video == NULL)
 	{
 		log_add (log_Error, "Couldn't set OpenGL %ix%ix%i video mode: %s",
@@ -126,9 +145,9 @@ AttemptColorDepth (int flags, int width, int height, int bpp)
 	{
 		log_add (log_Info, "Set the resolution to: %ix%ix%i"
 				" (surface reports %ix%ix%i)",
-				width, height, bpp,			 
-				SDL_GetVideoSurface()->w, SDL_GetVideoSurface()->h,
-				SDL_GetVideoSurface()->format->BitsPerPixel);
+				width, height, bpp,
+				SDL_Video->w, SDL_Video->h,
+				SDL_Video->format->BitsPerPixel);
 
 		log_add (log_Info, "OpenGL renderer: %s version: %s",
 				glGetString (GL_RENDERER), glGetString (GL_VERSION));

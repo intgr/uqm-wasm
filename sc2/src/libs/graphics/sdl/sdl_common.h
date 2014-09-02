@@ -52,4 +52,13 @@ SDL_Surface* Create_Screen (SDL_Surface *templat, int w, int h);
 int ReInit_Screen (SDL_Surface **screen, SDL_Surface *templat, int w, int h);
 void UnInit_Screen (SDL_Surface **screen);
 
+// SDL2 compatibility, so we don't need to plaster #ifs all over
+#if !SDL_VERSION_ATLEAST(1,3,0)
+# define SDL_WINDOW_FULLSCREEN SDL_FULLSCREEN
+# define SDL_WINDOW_OPENGL SDL_OPENGL
+#else
+// When calling SDL_SetColorKey(), you should pass SDL_TRUE instead of SDL_SRCCOLORKEY.
+# define SDL_SRCCOLORKEY SDL_TRUE
+#endif
+
 #endif

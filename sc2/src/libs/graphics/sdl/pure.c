@@ -15,6 +15,7 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
+#include <SDL_video.h>
 #include "pure.h"
 #include "libs/graphics/bbox.h"
 #include "scalers.h"
@@ -128,14 +129,33 @@ TFB_Pure_ConfigureVideo (int driver, int flags, int width, int height, int toggl
 					"under pure SDL, using 640x480", width, height);
 	}
 
-	videomode_flags |= SDL_ANYFORMAT;
 	if (flags & TFB_GFXFLAGS_FULLSCREEN)
-		videomode_flags |= SDL_FULLSCREEN;
+		videomode_flags |= SDL_WINDOW_FULLSCREEN;
 
 	/* We'll ask for a 32bpp frame, but it doesn't really matter, because we've set
 	   SDL_ANYFORMAT */
-	SDL_Video = SDL_SetVideoMode (ScreenWidthActual, ScreenHeightActual, 
+#if SDL_VERSION_ATLEAST(1,3,0)
+	// FIXME WTF
+	SDL_Window *win = SDL_CreateWindow("Foobar",
+		SDL_WINDOWPOS_UNDEFINED,
+		SDL_WINDOWPOS_UNDEFINED,
+		ScreenWidthActual, ScreenHeightActual,
+		videomode_flags);
+	SDL_Video = SDL_CreateRGBSurface(0, 640, 480, 32,
+		0x00FF0000,
+		0x0000FF00,
+		0x000000FF,
+		0xFF000000);
+	SDL_Renderer *renderer = SDL_CreateRenderer(win, -1, 0);
+	SDL_Texture *txt = SDL_CreateTexture(renderer,
+		SDL_PIXELFORMAT_ARGB8888,
+		SDL_TEXTUREACCESS_STREAMING,
+		640, 480);
+#else
+	videomode_flags |= SDL_ANYFORMAT;
+	SDL_Video = SDL_SetVideoMode (ScreenWidthActual, ScreenHeightActual,
 		32, videomode_flags);
+#endif
 
 	if (SDL_Video == NULL)
 	{
@@ -146,12 +166,11 @@ TFB_Pure_ConfigureVideo (int driver, int flags, int width, int height, int toggl
 	}
 	else
 	{
-		const SDL_Surface *video = SDL_GetVideoSurface ();
-		const SDL_PixelFormat* fmt = video->format;
+		const SDL_PixelFormat* fmt = SDL_Video->format;
 
 		ScreenColorDepth = fmt->BitsPerPixel;
 		log_add (log_Info, "Set the resolution to: %ix%ix%i",
-				video->w, video->h, ScreenColorDepth);
+				SDL_Video->w, SDL_Video->h, ScreenColorDepth);
 		log_add (log_Info, "  Video: R %08x, G %08x, B %08x, A %08x",
 				fmt->Rmask, fmt->Gmask, fmt->Bmask, fmt->Amask);
 		

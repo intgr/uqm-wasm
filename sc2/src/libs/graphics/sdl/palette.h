@@ -46,7 +46,11 @@ ColorToNative (Color color)
 	native.r = color.r;
 	native.g = color.g;
 	native.b = color.b;
+#if SDL_VERSION_ATLEAST(1,3,0)
+	native.a = 0xff; // fully opaque
+#else
 	native.unused = 0;
+#endif
 	return native;
 }
 
