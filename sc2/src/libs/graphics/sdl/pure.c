@@ -252,11 +252,14 @@ TFB_Pure_ConfigureVideo (int driver, int flags, int width, int height, int toggl
 int
 TFB_Pure_InitGraphics (int driver, int flags, int width, int height)
 {
+#if SDL_VERSION_ATLEAST(1,3,0)
+	const char *VideoName = SDL_GetCurrentVideoDriver();
+#else
 	char VideoName[256];
 
-	log_add (log_Info, "Initializing Pure-SDL graphics.");
-
 	SDL_VideoDriverName (VideoName, sizeof (VideoName));
+#endif
+	log_add (log_Info, "Initializing Pure-SDL graphics.");
 	log_add (log_Info, "SDL driver used: %s", VideoName);
 			// Set the environment variable SDL_VIDEODRIVER to override
 			// For Linux: x11 (default), dga, fbcon, directfb, svgalib,

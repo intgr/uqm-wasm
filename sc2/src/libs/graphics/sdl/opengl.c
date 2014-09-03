@@ -268,11 +268,15 @@ TFB_GL_ConfigureVideo (int driver, int flags, int width, int height, int togglef
 int
 TFB_GL_InitGraphics (int driver, int flags, int width, int height)
 {
+#if SDL_VERSION_ATLEAST(1,3,0)
+	const char *VideoName = SDL_GetCurrentVideoDriver();
+#else
 	char VideoName[256];
 
-	log_add (log_Info, "Initializing SDL with OpenGL support.");
-
 	SDL_VideoDriverName (VideoName, sizeof (VideoName));
+#endif
+
+	log_add (log_Info, "Initializing SDL with OpenGL support.");
 	log_add (log_Info, "SDL driver used: %s", VideoName);
 	log_add (log_Info, "SDL initialized.");
 	log_add (log_Info, "Initializing Screen.");
