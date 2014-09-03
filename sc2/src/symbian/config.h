@@ -26,7 +26,7 @@
 #undef HAVE_READDIR_R
 
 /* Defined if your system has setenv of its own */
-#define HAVE_SETENV
+#define HAVE_SETENV_UQM
 
 /* Defined if your system has strupr of its own */
 #undef HAVE_STRUPR

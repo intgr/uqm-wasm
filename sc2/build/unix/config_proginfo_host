@@ -337,6 +337,9 @@ SYMBOL_readdir_r_EXTRA="#include <dirent.h>"
 
 SYMBOL_setenv_EXTRA="#include <stdlib.h>"
 
+SYMBOL_setenv_DEFNAME="HAVE_SETENV_UQM"
+		# HAVE_SETENV would conflict with SDL (SDL_config.h).
+
 SYMBOL_strcasecmp_EXTRA="#include <strings.h>"
 
 SYMBOL_strcasecmp_DEFNAME="HAVE_STRCASECMP_UQM"

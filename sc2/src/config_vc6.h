@@ -33,7 +33,8 @@
 #undef HAVE_READDIR_R
 
 /* Defined if your system has setenv of its own */
-#undef HAVE_SETENV
+#undef HAVE_SETENV_UQM
+		// Not using "HAVE_SETENV" as that conflicts with SDL.
 
 /* Defined if your system has strupr of its own */
 #define HAVE_STRUPR
