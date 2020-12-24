@@ -39,7 +39,11 @@ static UniChar lastchar;
 static unsigned int num_keys = 0;
 static int *kbdstate = NULL;
 		// Holds all SDL keys +1 for holding invalid values
-#endif // Later versions of SDL use the text input API instead
+#else // Later versions of SDL use the text input API instead
+static BOOLEAN set_character_mode = FALSE;
+		// Records whether the UI thread has caught up with game thread
+		// on this setting
+#endif
 
 static volatile int *menu_vec;
 static int num_menu;
@@ -304,17 +308,11 @@ EnterCharacterMode (void)
 	lastchar = 0;
 	in_character_mode = TRUE;
 	VControl_ResetInput ();
-#if SDL_MAJOR_VERSION > 1
-	SDL_StartTextInput ();
-#endif
 }
 
 void
 ExitCharacterMode (void)
 {
-#if SDL_MAJOR_VERSION > 1
-	SDL_StopTextInput ();
-#endif
 	VControl_ResetInput ();
 	in_character_mode = FALSE;
 	kbdhead = kbdtail = 0;
@@ -376,6 +374,20 @@ ProcessInputEvent (const SDL_Event *Event)
 		return;
 	
 	ProcessMouseEvent (Event);
+
+#if SDL_MAJOR_VERSION > 1
+	if (in_character_mode && !set_character_mode)
+	{
+		set_character_mode = TRUE;
+		SDL_StartTextInput ();
+	}
+
+	if (!in_character_mode && set_character_mode)
+	{
+		set_character_mode = FALSE;
+		SDL_StopTextInput ();
+	}
+#endif
 
 	// In character mode with NumLock on, numpad chars bypass VControl
 	// so that menu arrow events are not produced
