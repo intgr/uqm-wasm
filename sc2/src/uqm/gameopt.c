@@ -317,6 +317,7 @@ NameCaptainOrShip (bool nameCaptain)
 	TEXTENTRY_STATE tes;
 	UNICODE *Setting;
 
+	SetContext (StatusContext);
 	SetFlashRect (nameCaptain ? &captainNameRect : &shipNameRect);
 
 	DrawNameString (nameCaptain, buf, 0, DDSHS_EDIT);
