@@ -492,6 +492,7 @@ Section Uninstall
   Delete "$INSTDIR\content\packages\addons\remix\uqm-remix-pack3.zip"
   Delete "$INSTDIR\content\packages\addons\remix\uqm-remix-pack2.zip"
   Delete "$INSTDIR\content\packages\addons\remix\uqm-remix-pack1.zip"
+  Delete "$INSTDIR\content\addons\uqm-remix-disc4-1.uqm"
   Delete "$INSTDIR\content\addons\uqm-remix-disc4.uqm"
   Delete "$INSTDIR\content\addons\uqm-remix-disc3.uqm"
   Delete "$INSTDIR\content\addons\uqm-remix-disc2.uqm"
