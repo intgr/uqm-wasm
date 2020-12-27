@@ -375,20 +375,6 @@ ProcessInputEvent (const SDL_Event *Event)
 	
 	ProcessMouseEvent (Event);
 
-#if SDL_MAJOR_VERSION > 1
-	if (in_character_mode && !set_character_mode)
-	{
-		set_character_mode = TRUE;
-		SDL_StartTextInput ();
-	}
-
-	if (!in_character_mode && set_character_mode)
-	{
-		set_character_mode = FALSE;
-		SDL_StopTextInput ();
-	}
-#endif
-
 	// In character mode with NumLock on, numpad chars bypass VControl
 	// so that menu arrow events are not produced
 	if (!is_numpad_char_event (Event))
@@ -448,6 +434,18 @@ ProcessInputEvent (const SDL_Event *Event)
 		return;
 	
 	ProcessMouseEvent (Event);
+
+	if (in_character_mode && !set_character_mode)
+	{
+		set_character_mode = TRUE;
+		SDL_StartTextInput ();
+	}
+
+	if (!in_character_mode && set_character_mode)
+	{
+		set_character_mode = FALSE;
+		SDL_StopTextInput ();
+	}
 
 	/* TODO: Block numpad input when NUM_LOCK is on */
 	VControl_HandleEvent (Event);
