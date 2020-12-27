@@ -5,7 +5,7 @@ You will need additional packages installed beyond what is necessary
 for a build:
 
     pacman -S dos2unix mingw-w64-i686-nsis mingw-w64-i686-ntldd
-    pacman -S mingw-w64-i686-SDL mingw-w64-i686-SDL_gfx unzip zip
+    pacman -S mingw-w64-i686-SDL2_gfx unzip zip
 
 You will also need the INetC and MD5dll plugins for NSIS:
 
@@ -24,11 +24,19 @@ include updates to the "packages.nsh" file and the "uqm-installer.nsi" files,
 so you should inspect these files to make sure that it's announcing the
 correct version and downloading the correct versions of the content packs.
 
-With these things in place, run the installer creator out of its directory:
+With these things in place, create the release build:
 
-    cd sc2/build/win32_install
+    cd sc2
+    ./build.sh uqm clean
+    ./build.sh uqm
+
+Make sure that you select a release build so that uqm.exe will be built
+instead of uqm-debug.exe. Assuming the build works according to plan,
+you will then run the installer creator out of its directory:
+
+    cd build/win32_install
     ./build-win32-installer.sh
 
-If all goes well, this will build UQM and the KeyJam application, and then
-build an NSIS-based installer that will install them and all necessary
-ancillary files.
+If all goes well, this will build KeyJam application, import, rename, and
+convert the necessary ancillary files, and then build an NSIS-based
+installer that will install them.
