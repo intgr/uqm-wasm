@@ -28,6 +28,7 @@
 
 #include <stdarg.h>
 #include <errno.h>
+#include "libs/alarm.h"
 #include "libs/graphics/gfx_common.h"
 #include "libs/graphics/cmap.h"
 #include "libs/sound/sound.h"
@@ -48,7 +49,6 @@
 #include "uqm/comm.h"
 #ifdef NETPLAY
 #	include "libs/callback.h"
-#	include "libs/alarm.h"
 #	include "libs/net.h"
 #	include "uqm/supermelee/netplay/netoptions.h"
 #	include "uqm/supermelee/netplay/netplay.h"
