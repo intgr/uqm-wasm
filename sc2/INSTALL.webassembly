@@ -1,0 +1,52 @@
+BUILDING THE UR-QUAN MASTERS TO WEBASSEMBLY
+-------------------------------------------
+
+It is now possible to build Star Control 2: The Ur-Quan Masters to WebAssembly
+for running in web browsers, using the Emscripten toolchain.
+
+* Install Emscripten: https://emscripten.org/docs/getting_started/downloads.html
+* Make sure Emscripten binaries/wrappers are in PATH.
+  The command `emcc --show-ports` should work.
+
+Build UQM
+---------
+Run the configuration menu:
+
+    cd sc2
+    emconfigure ./build.sh uqm config
+
+The first time you run this, it takes a few minutes as Emscripten downloads
+and builds ports of required libraries.
+
+Nothing special needs to be done there, everything should be auto-detected.
+Just for reference, here is a tested working configuration:
+
+     1. Type of build                        Optimised release build
+     2. Graphics Engine                      SDL2 with modern graphics support
+     3. Sound backend                        Include OpenAL support (experimental)
+     4. Tracker music support                Included libmikmod
+     5. Ogg Vorbis codec                     Xiph libogg + libvorbis
+     6. Network Supermelee support           disabled
+     7. Joystick support                     enabled
+     8. Supported file i/o methods           Direct & .zip file i/o
+     9. Graphics/Sound optimizations         Platform acceleration (asm, etc.)
+    10. Thread library                       Pthread thread library
+
+Press <ENTER> to finish configuration and build it:
+
+    ./build.sh uqm -j16
+
+You should have an `uqm.html` file as output.
+
+Known issues
+------------
+* Audio: Firefox doesn't play some samples (e.g. menu ping), but works in Chrome
+* Audio: MixSDL does not work
+* Threading: SDL threading does not work (pthread only)
+
+Troubleshooting
+---------------
+You can clean and force a re-build of emscripten-ports with:
+
+    emcc --clear-cache
+    emcc -c -E - -s USE_ZLIB=1 -s USE_LIBPNG=1 -s USE_VORBIS=1 -s USE_SDL=2 -s ASYNCIFY -pthread </dev/null
