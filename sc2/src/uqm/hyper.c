@@ -598,6 +598,13 @@ init_transition (ELEMENT *ElementPtr0, ELEMENT *ElementPtr1,
 			dx / num_turns, dy / num_turns);
 }
 
+// Wrapper needed for Emscripten
+static void
+hyper_preprocess (ELEMENT *ElementPtr)
+{
+	hyper_transition(ElementPtr);
+}
+
 BOOLEAN
 hyper_transition (ELEMENT *ElementPtr)
 {
@@ -616,8 +623,7 @@ hyper_transition (ELEMENT *ElementPtr)
 		}
 		else
 		{
-			ElementPtr->preprocess_func =
-					(void (*) (struct element *ElementPtr)) hyper_transition;
+			ElementPtr->preprocess_func = hyper_preprocess;
 			ElementPtr->postprocess_func = NULL;
 			ElementPtr->state_flags |= NONSOLID;
 			ElementPtr->next.image.frame =

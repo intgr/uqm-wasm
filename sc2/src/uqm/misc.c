@@ -27,6 +27,13 @@
 #include "libs/mathlib.h"
 
 
+// Wrapper needed for Emscripten
+static void
+planet_postprocess (ELEMENT *ElementPtr)
+{
+	CalculateGravity(ElementPtr);
+}
+
 void
 spawn_planet (void)
 {
@@ -48,8 +55,7 @@ spawn_planet (void)
 		PlanetElementPtr->current.image.frame =
 				PlanetElementPtr->current.image.farray[0];
 		PlanetElementPtr->collision_func = collision;
-		PlanetElementPtr->postprocess_func =
-				(void (*) (struct element *ElementPtr))CalculateGravity;
+		PlanetElementPtr->postprocess_func = planet_postprocess;
 		ZeroVelocityComponents (&PlanetElementPtr->velocity);
 		do
 		{
