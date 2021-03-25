@@ -113,6 +113,10 @@ case "$HOST_SYSTEM" in
 			LIB_libpng_LDFLAGS="-lpng"
 		fi
 		;;
+	Emscripten)
+		LIB_libpng_CFLAGS="-s USE_LIBPNG=1"
+		LIB_libpng_LDFLAGS="-lpng"
+		;;
 	*)
 		LIB_libpng_CFLAGS=""
 		LIB_libpng_LDFLAGS="-lpng"
@@ -142,6 +146,9 @@ LIB_openal_VERSION=""
 case "$HOST_SYSTEM" in
 	Darwin)
 		## Apple does not ship pkg-config on Mac OSX
+		;;
+	Emscripten)
+		LIB_openal_LDFLAGS="-lopenal"
 		;;
 	*)
 		LIB_openal_DETECT="try_pkgconfig_lib openal openal"
@@ -209,6 +216,10 @@ case "$HOST_SYSTEM" in
 		;;
 	Darwin)
 		## Apple does not ship pkg-config on Mac OSX
+		;;
+	Emscripten)
+		LIB_vorbisfile_CFLAGS="-s USE_VORBIS=1"
+		LIB_vorbisfile_LDFLAGS="-lvorbis -logg"
 		;;
 	*)
 		LIB_vorbisfile_DETECT="try_pkgconfig_lib vorbisfile vorbisfile"
@@ -279,6 +290,9 @@ case "$HOST_SYSTEM" in
 	Darwin)
 		## Apple does not ship pkg-config on Mac OSX
 		;;
+	Emscripten)
+		LIB_zlib_CFLAGS="-s USE_ZLIB=1"
+		;;
 	*)
 		LIB_zlib_DETECT="try_pkgconfig_lib zlib zlib"
 		LIB_zlib_DEPEND_DETECT_BIN="pkgconfig"
@@ -320,7 +334,7 @@ case "$HOST_SYSTEM" in
 		LIB_netlibs_LDFLAGS="-lsocket"
 		LIB_netlibs_VERSION=""
 		;;
-	ARMV5|WINSCW|GCCE)
+	ARMV5|WINSCW|GCCE|Emscripten)
 		LIB_netlibs_DETECT="false"
 		;;
 esac
