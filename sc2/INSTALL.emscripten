@@ -1,0 +1,64 @@
+             BUILDING THE UR-QUAN MASTERS FOR EMSCRIPTEN
+             -------------------------------------------
+
+It is now possible to build UQM to WebAssembly for running in web browsers,
+using Emscripten.
+
+Only tested on Linux.
+
+* Install Emscripten.
+* Make sure Emscripten binaries/wrappers are in PATH
+  (Arch Linux: run `source /etc/profile.d/emscripten.sh` in shell)
+* The command `emcc --show-ports` should work.
+
+Build libvorbisfile
+-------------------
+
+(Optional, if you want audio support)
+
+Unfortunately a port of this library does not exist in Emscripten yet, so it
+has to be built manually.
+
+Go one step higher (to the root of sc2-uqm checkout) and run:
+
+    git clone https://gitlab.xiph.org/xiph/vorbis.git
+    cd vorbis
+    emconfigure ./autogen.sh
+    emconfigure ./configure
+    emmake make -j16
+
+There should be a file `./lib/.libs/libvorbisfile.a` as a result.
+
+Build UQM
+---------
+Run the configuration menu:
+
+    cd sc2
+    emconfigure ./build.sh uqm config
+
+Nothing special needs to be done there, everything should be auto-detected.
+Just for reference, here is a tested working configuration:
+
+   1. Type of build                        Optimised release build
+   2. Graphics Engine                      SDL2 with modern graphics support
+   3. Sound backend                        Include OpenAL support (experimental)
+   4. Tracker music support                Included libmikmod
+   5. Ogg Vorbis codec                     Xiph libogg + libvorbis
+   6. Network Supermelee support           disabled
+   7. Joystick support                     enabled
+   8. Supported file i/o methods           Direct & .zip file i/o
+   9. Graphics/Sound optimizations         Platform acceleration (asm, etc.)
+  10. Thread library                       Pthread thread library
+
+Press <ENTER> to finish configuration and build it:
+
+    emmake ./build.sh uqm -j16
+
+You should have an `uqm.html` file as output.
+
+Run it
+------
+You can use the included nginx configuration to serve up files for the web browser:
+
+    nginx -p $PWD -c uqm.nginx
+    xdg-open http://localhost:9999/uqm.html
