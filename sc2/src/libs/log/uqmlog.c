@@ -130,7 +130,11 @@ log_init (int max_lines)
 	int i;
 
 	maxDisp = max_lines;
+#ifdef EMSCRIPTEN
+	streamOut = stdout;
+#else
 	streamOut = stderr;
+#endif
 
 	// pre-term queue strings
 	for (i = 0; i < MAX_LOG_ENTRIES; ++i)
