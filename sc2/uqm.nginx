@@ -1,0 +1,32 @@
+# Run:
+# nginx -p $PWD -c uqm.nginx
+pid /dev/null;
+
+events {
+}
+
+http {
+    include      /etc/nginx/mime.types;
+    types {
+        application/wasm wasm;
+    }
+    sendfile     on;
+
+    access_log off;
+
+    add_header Cross-Origin-Embedder-Policy require-corp;
+    add_header Cross-Origin-Opener-Policy same-origin;
+
+    server {
+        # no need for root privileges
+        listen      9999;
+        server_name localhost;
+
+        location / {
+            # insert desired path here
+            root      .;
+            # this directive enables directory listing
+            autoindex on;
+        }
+    }
+}

@@ -7,3 +7,8 @@ sc2/obj
 sc2/uqm-debug
 sc2/uqm-wrapper
 sc2/uqm
+sc2/*.wasm
+sc2/*.map
+sc2/*.js
+sc2/*.html
+sc2/*.data
