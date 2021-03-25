@@ -1055,7 +1055,11 @@ EOF
 
 # Define the build system type.
 set_build_system() {
-	BUILD_SYSTEM=`uname -s`
+    if [ -z "$EMSCRIPTEN" ]; then
+    	BUILD_SYSTEM=`uname -s`
+    else
+    	BUILD_SYSTEM="Emscripten"
+    fi
 }
 
 # Define the host system type.

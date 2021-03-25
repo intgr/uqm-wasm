@@ -113,6 +113,10 @@ case "$HOST_SYSTEM" in
 			LIB_libpng_LDFLAGS="-lpng"
 		fi
 		;;
+	Emscripten)
+		LIB_libpng_CFLAGS="-s USE_LIBPNG=1"
+		LIB_libpng_LDFLAGS="-lpng"
+        ;;
 	*)
 		LIB_libpng_CFLAGS=""
 		LIB_libpng_LDFLAGS="-lpng"
@@ -198,8 +202,14 @@ case "$HOST_SYSTEM" in
 		LIB_vorbisfile_LDFLAGS="-lvorbisfile -lvorbis -logg -lm"
 		;;
 	*)
-		LIB_vorbisfile_CFLAGS=""
-		LIB_vorbisfile_LDFLAGS="-lvorbisfile -lvorbis"
+	    if [ "$BUILD_SYSTEM" = "Emscripten" ]; then
+            LIB_vorbisfile_CFLAGS="-s USE_VORBIS=1"
+            # FIXME HACK
+            LIB_vorbisfile_LDFLAGS="-lvorbis -logg ../vorbis/lib/.libs/libvorbisfile.a"
+		else
+            LIB_vorbisfile_CFLAGS=""
+            LIB_vorbisfile_LDFLAGS="-lvorbisfile -lvorbis"
+		fi
 		;;
 esac
 LIB_vorbisfile_VERSION=""
@@ -267,6 +277,10 @@ case "$HOST_SYSTEM" in
 	ARMV5|WINSCW|GCCE)
 		LIB_zlib_LDFLAGS=""
 		;;
+	Emscripten)
+        LIB_zlib_CFLAGS="-s USE_ZLIB=1"
+		LIB_zlib_LDFLAGS="-lz"
+	    ;;
 	*)
 		LIB_zlib_LDFLAGS="-lz"
 		;;
@@ -280,8 +294,8 @@ case "$HOST_SYSTEM" in
 		## Apple does not ship pkg-config on Mac OSX
 		;;
 	*)
-		LIB_zlib_DETECT="try_pkgconfig_lib zlib zlib"
-		LIB_zlib_DEPEND_DETECT_BIN="pkgconfig"
+        LIB_zlib_DETECT="try_pkgconfig_lib zlib zlib"
+        LIB_zlib_DEPEND_DETECT_BIN="pkgconfig"
 		;;
 esac
 
