@@ -75,11 +75,16 @@ initAudio (sint32 driver, sint32 flags)
 
 	if (ret != 0)
 	{
-		log_add (log_Fatal, "Sound driver initialization failed.\n"
+		log_add (log_Warning, "Sound driver initialization failed.\n"
 				"This may happen when a soundcard is "
 				"not present or not available.\n"
-				"NOTICE: Try running UQM with '--sound=none' option");
-		exit (EXIT_FAILURE);
+				"Falling back to disabled sound...");
+		ret = noSound_Init (&audiodrv, flags);
+		if (ret != 0)
+		{
+			log_add (log_Fatal, "Error initializing no sound (?!)");
+			exit (EXIT_FAILURE);
+		}
 	}
 
 	SetSFXVolume (sfxVolumeScale);
