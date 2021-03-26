@@ -49,6 +49,10 @@ sint32
 initAudio (sint32 driver, sint32 flags)
 {
 	sint32 ret;
+#ifdef EMSCRIPTEN
+	// FIXME HACK
+	driver = audio_DRIVER_OPENAL;
+#endif
 
 #ifdef HAVE_OPENAL
 	if (driver == audio_DRIVER_MIXSDL)
