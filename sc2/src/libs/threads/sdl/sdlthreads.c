@@ -17,6 +17,7 @@
 #include <stdlib.h>
 #include "libs/misc.h"
 #include "libs/memlib.h"
+#include "../thrcommon.h"
 #include "sdlthreads.h"
 #ifdef PROFILE_THREADS
 #include <signal.h>
@@ -316,7 +317,11 @@ SleepThreadUntil_SDL (TimeCount wakeTime) {
 
 void
 TaskSwitch_SDL (void) {
+#ifdef EMSCRIPTEN
+	TaskSwitch_Emscripten ();
+#else
 	SDL_Delay (1);
+#endif
 }
 
 void

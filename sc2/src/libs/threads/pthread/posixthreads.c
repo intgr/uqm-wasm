@@ -17,6 +17,7 @@
 #include <stdlib.h>
 #include "libs/misc.h"
 #include "libs/memlib.h"
+#include "../thrcommon.h"
 #include "posixthreads.h"
 #include <pthread.h>
 #include <unistd.h>
@@ -257,7 +258,11 @@ SleepThreadUntil_PT (TimeCount wakeTime) {
 
 void
 TaskSwitch_PT (void) {
+#ifdef EMSCRIPTEN
+	TaskSwitch_Emscripten ();
+#else
 	usleep (1000);
+#endif
 }
 
 void
