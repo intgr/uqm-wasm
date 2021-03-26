@@ -25,6 +25,10 @@
 
 #include "libs/log/uqmlog.h"
 
+#ifdef EMSCRIPTEN
+#include <emscripten.h>
+#endif
+
 typedef struct _thread {
 	pthread_t native;
 #ifdef NAMED_SYNCHRO
@@ -257,7 +261,11 @@ SleepThreadUntil_PT (TimeCount wakeTime) {
 
 void
 TaskSwitch_PT (void) {
+#ifdef EMSCRIPTEN
+	emscripten_sleep (1);
+#else
 	usleep (1000);
+#endif
 }
 
 void
