@@ -24,5 +24,9 @@
 #	include "pthread/posixthreads.h"
 #endif  /* defined(THREADLIB_PTHREAD) */
 
+#ifdef EMSCRIPTEN
+/* Emscripten requires different yield function */
+void TaskSwitch_Emscripten (void);
+#endif
 
 #endif  /* _THR_COMMON_H */

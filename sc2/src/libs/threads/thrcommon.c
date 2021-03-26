@@ -16,6 +16,10 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#ifdef EMSCRIPTEN
+#include <emscripten.h>
+#endif
+
 #include "libs/threadlib.h"
 #include "libs/timelib.h"
 #include "libs/log.h"
@@ -449,3 +453,13 @@ GetRecursiveMutexDepth (RecursiveMutex mutex)
 {
 	return NativeGetRecursiveMutexDepth (mutex);
 }
+
+#ifdef EMSCRIPTEN
+/* Emscripten needs special treatment to convert synchronous code to async.
+ * See https://emscripten.org/docs/porting/asyncify.html
+ */
+void
+TaskSwitch_Emscripten (void) {
+	emscripten_sleep (1);
+}
+#endif
