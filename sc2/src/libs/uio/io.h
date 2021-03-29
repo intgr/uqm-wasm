@@ -24,6 +24,9 @@
 #include <assert.h>
 #include <sys/stat.h>
 
+// FIXME where to put this?
+#define ZIP_LAZYLOAD 1
+
 typedef struct uio_Handle uio_Handle;
 typedef struct uio_DirHandle uio_DirHandle;
 typedef struct uio_DirList uio_DirList;

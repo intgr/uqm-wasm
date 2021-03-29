@@ -24,12 +24,14 @@
 extern uio_FileSystemHandler stdio_fileSystemHandler;
 #ifdef HAVE_ZIP
 extern uio_FileSystemHandler zip_fileSystemHandler;
+extern uio_FileSystemHandler ziptree_fileSystemHandler;
 #endif
 
 const uio_DefaultFileSystemSetup defaultFileSystems[] = {
 	{ uio_FSTYPE_STDIO, "stdio", &stdio_fileSystemHandler },
 #ifdef HAVE_ZIP
 	{ uio_FSTYPE_ZIP, "zip", &zip_fileSystemHandler },
+	{ uio_FSTYPE_ZIPTREE, "ziptree", &ziptree_fileSystemHandler },
 #endif
 };
 

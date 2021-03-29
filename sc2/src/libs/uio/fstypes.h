@@ -24,7 +24,11 @@
 typedef int uio_FileSystemID;
 #define uio_FSTYPE_STDIO 1
 #define uio_FSTYPE_ZIP   2
+#define uio_FSTYPE_ZIPTREE 3
 
+#ifdef __JETBRAINS_IDE__
+#define uio_INTERNAL
+#endif
 
 #ifdef uio_INTERNAL
 

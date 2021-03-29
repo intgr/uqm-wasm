@@ -332,10 +332,40 @@ mountContentDir (uio_Repository *repository, const char *contentPath)
 	uio_DirHandle *packagesDir;
 	static uio_AutoMount *autoMount[] = { NULL };
 	uio_MountHandle *contentMountHandle;
+#ifdef ZIP_LAZYLOAD
+	char ziptreePath[PATH_MAX];
+	if (expandPath (ziptreePath, sizeof ziptreePath, "ziptree",
+		EP_ALL_SYSTEM) == -1)
+	{
+		log_add (log_Fatal, "Fatal error: Could not expand path to ziptree "
+				"directory: %s", strerror (errno));
+		exit (EXIT_FAILURE);
+	}
+//	uio_FileSystemID fsType = uio_FSTYPE_ZIPTREE;
+//	uio_FileSystemID fsType = uio_FSTYPE_STDIO;
+	contentMountHandle = uio_mountDir (repository, "/",
+			uio_FSTYPE_ZIPTREE, NULL, NULL, "/", autoMount,
+			uio_MOUNT_BOTTOM | uio_MOUNT_RDONLY, NULL);
+	uio_MountHandle *ziptreeMount = uio_mountDir (repository, "/ziptree",
+			uio_FSTYPE_STDIO, NULL, NULL, ziptreePath, autoMount,
+			uio_MOUNT_TOP | uio_MOUNT_RDONLY, NULL);
 
+	uio_DirHandle * ziptreeDir = uio_openDir(repository, "/ziptree", 0);
+
+	contentMountHandle = uio_mountDir (repository, "/",
+			uio_FSTYPE_ZIP, ziptreeDir, "content.zip", "/", autoMount,
+			uio_MOUNT_TOP | uio_MOUNT_RDONLY, NULL);
+	if (ziptreeMount == NULL)
+	{
+		log_add (log_Fatal, "Fatal error: Could not mount %s: %s",
+				ziptreePath, strerror (errno));
+		exit (EXIT_FAILURE);
+	}
+#else
 	contentMountHandle = uio_mountDir (repository, "/",
 			uio_FSTYPE_STDIO, NULL, NULL, contentPath, autoMount,
 			uio_MOUNT_TOP | uio_MOUNT_RDONLY, NULL);
+#endif
 	if (contentMountHandle == NULL)
 	{
 		log_add (log_Fatal, "Fatal error: Could not mount content dir: %s",
@@ -400,12 +430,27 @@ mountAddonDir (uio_Repository *repository, uio_MountHandle *contentMountHandle,
 	}
 
 	mountDirZips (addonsDir, "addons", uio_MOUNT_BELOW, mountHandle);
-			
+
+#ifdef ZIP_LAZYLOAD
+	const char* names[] = {
+		"3domusic",
+		"3dovideo",
+		"3dovoice",
+	};
+	uio_DirList availableAddonsConst =
+	{
+		.names = names,
+		.numNames = 3,
+	};
+	availableAddons = &availableAddonsConst;
+#else
 	availableAddons = uio_getDirList (addonsDir, "", "", match_MATCH_PREFIX);
+#endif
 	if (availableAddons != NULL)
 	{
 		int i, count;
-		
+
+#ifndef ZIP_LAZYLOAD
 		// count the actual addon dirs
 		count = 0;
 		for (i = 0; i < availableAddons->numNames; ++i)
@@ -421,6 +466,9 @@ mountAddonDir (uio_Repository *repository, uio_MountHandle *contentMountHandle,
 			}
 			++count;
 		}
+#else
+		count = availableAddonsConst.numNames;
+#endif
 		log_add (log_Info, "%d available addon pack%s.", count,
 				count == 1 ? "" : "s");
 
@@ -455,7 +503,9 @@ mountAddonDir (uio_Repository *repository, uio_MountHandle *contentMountHandle,
 		log_add (log_Info, "0 available addon packs.");
 	}
 
+#ifndef ZIP_LAZYLOAD
 	uio_DirList_free (availableAddons);
+#endif
 	uio_closeDir (addonsDir);
 }
 

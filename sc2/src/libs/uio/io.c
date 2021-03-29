@@ -35,6 +35,7 @@
 #include "mem.h"
 #include "uioutils.h"
 #include "uioport.h"
+#	include "libs/log.h"
 #ifdef uio_MEM_DEBUG
 #	include "memdebug.h"
 #endif
@@ -795,7 +796,9 @@ uio_open(uio_DirHandle *dir, const char *path, int flags, mode_t mode) {
 	uio_MountInfo *readMountInfo, *writeMountInfo;
 	char *name;
 	uio_Handle *handle;
-	
+
+	log_add (log_Debug, "Open: %s    (%d %d)", path, flags, mode);
+
 	if (uio_getPhysicalAccess(dir, path, flags, 0,
 			&readMountInfo, &readPDirHandle, NULL,
 			&writeMountInfo, &writePDirHandle, NULL, &name) == -1) {

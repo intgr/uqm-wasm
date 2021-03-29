@@ -854,7 +854,7 @@ zip_fillDirStructureCentralProcessEntry(uio_GPDir *topGPDir,
 #if defined(DEBUG) && DEBUG > 1
 		fprintf(stderr, "Debug: Found file '%s'.\n", fileName);
 #endif
-	} else if (S_ISDIR(gPFileData->mode)) {
+	} else if (S_ISDIR(gPFileData->mode) || fileName[fileNameLength - 1] == '/') {
 		if (fileName[fileNameLength - 1] == '/')
 			fileName[fileNameLength - 1] = '\0';
 		if (zip_foundDir(topGPDir, fileName, gPFileData) == -1) {
