@@ -248,7 +248,11 @@ main (int argc, char *argv[])
 		INIT_CONFIG_OPTION(  showFps,           false ),
 		INIT_CONFIG_OPTION(  keepAspectRatio,   false ),
 		INIT_CONFIG_OPTION(  gamma,             1.0f ),
+#if defined(EMSCRIPTEN) && defined(HAVE_OPENAL)
+		INIT_CONFIG_OPTION(  soundDriver,       audio_DRIVER_OPENAL ),
+#else
 		INIT_CONFIG_OPTION(  soundDriver,       audio_DRIVER_MIXSDL ),
+#endif
 		INIT_CONFIG_OPTION(  soundQuality,      audio_QUALITY_MEDIUM ),
 		INIT_CONFIG_OPTION(  use3doMusic,       true ),
 		INIT_CONFIG_OPTION(  useRemixMusic,     false ),
