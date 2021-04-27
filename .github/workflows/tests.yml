@@ -21,3 +21,8 @@ jobs:
         run: |
           cd sc2
           docker build --tag=uqm-wasm -f wasm/Dockerfile .
+      - name: Check build configuration
+        run: |
+          cd sc2
+          docker run --rm uqm-wasm grep CHOICE config.state \
+            |diff -us --color=always wasm/config.state.expected -
