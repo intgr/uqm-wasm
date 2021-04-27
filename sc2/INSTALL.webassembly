@@ -10,6 +10,9 @@ The easiest way to build and run UQM with Emscripten is via Docker.
 In the `sc2` directory, Simply run:
 
     docker build --tag=uqm-wasm -f wasm/Dockerfile .
+    docker run -it --rm -p9999:9999 uqm-wasm
+
+Then open in your web browser: http://localhost:9999/uqm-debug.html
 
 Building locally
 ----------------
@@ -44,6 +47,14 @@ Press <ENTER> to finish configuration and build it:
     ./build.sh uqm -j16
 
 You should have an `uqm.html` file as output.
+
+Run it
+------
+You can use the included nginx configuration to serve up files for the web browser:
+
+    nginx -p $PWD -c wasm/nginx.conf
+
+Then open in your web browser: http://localhost:9999/uqm-debug.html
 
 Known issues
 ------------
