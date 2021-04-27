@@ -4,12 +4,19 @@ BUILDING THE UR-QUAN MASTERS TO WEBASSEMBLY
 It is now possible to build Star Control 2: The Ur-Quan Masters to WebAssembly
 for running in web browsers, using the Emscripten toolchain.
 
+Building in Docker
+------------------
+The easiest way to build and run UQM with Emscripten is via Docker.
+In the `sc2` directory, Simply run:
+
+    docker build --tag=uqm-wasm -f wasm/Dockerfile .
+
+Building locally
+----------------
 * Install Emscripten: https://emscripten.org/docs/getting_started/downloads.html
 * Make sure Emscripten binaries/wrappers are in PATH.
   The command `emcc --show-ports` should work.
 
-Build UQM
----------
 Run the configuration menu:
 
     cd sc2

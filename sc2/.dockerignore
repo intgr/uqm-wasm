@@ -1,0 +1,15 @@
+.DS_Store
+*.app
+build.vars
+config.state
+config_unix.h
+wasm/Dockerfile
+obj
+uqm-debug
+uqm-wrapper
+uqm
+*.wasm
+*.map
+*.js
+*.html
+*.data
