@@ -1,8 +1,14 @@
-BUILDING THE UR-QUAN MASTERS TO WEBASSEMBLY
--------------------------------------------
+Star Control 2: The Ur-Quan Masters port to WebAssembly
+-------------------------------------------------------
 
-It is now possible to build Star Control 2: The Ur-Quan Masters to WebAssembly
+[![Tests status](https://github.com/intgr/uqm-wasm/workflows/Tests/badge.svg?branch=master)](https://github.com/intgr/uqm-wasm/actions?query=workflow:Tests)
+
+This is a fork of Star Control 2: The Ur-Quan Masters to WebAssembly
 for running in web browsers, using the Emscripten toolchain.
+
+Beware! In the WebAssembly build, **saved games are not** persistent, and the
+game has not received much testing. It is not fit for a full play-through, but
+currently merely a toy project.
 
 Building in Docker
 ------------------
@@ -31,7 +37,7 @@ and builds ports of required libraries.
 Nothing special needs to be done there, everything should be auto-detected.
 Just for reference, here is a tested working configuration:
 
-     1. Type of build                        Optimised release build
+     1. Type of build                        Debugging build
      2. Graphics Engine                      SDL2 with modern graphics support
      3. Sound backend                        Include OpenAL support (experimental)
      4. Tracker music support                Included libmikmod
@@ -58,9 +64,10 @@ Then open in your web browser: http://localhost:9999/uqm-debug.html
 
 Known issues
 ------------
+* Gameplay: No support for persistent saved games.
 * Audio: Firefox doesn't play some samples (e.g. menu ping), but works in Chrome
-* Audio: MixSDL does not work
-* Threading: SDL threading does not work (pthread only)
+* Audio: MixSDL does not work (OpenAL works)
+* Threading: SDL threading does not work (pthreads work)
 
 Troubleshooting
 ---------------
