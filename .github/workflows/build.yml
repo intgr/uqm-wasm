@@ -1,4 +1,4 @@
-name: Tests
+name: Build
 on:
   push:
     branches: [master, proposed]
@@ -21,7 +21,7 @@ jobs:
         run: |
           cd sc2
           docker build --tag=uqm-wasm -f wasm/Dockerfile .
-      - name: Check build configuration
+      - name: Compare detected configuration
         run: |
           cd sc2
           docker run --rm uqm-wasm grep CHOICE config.state \

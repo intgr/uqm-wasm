@@ -1,7 +1,7 @@
 Star Control 2: The Ur-Quan Masters port to WebAssembly
 -------------------------------------------------------
 
-[![Tests status](https://github.com/intgr/uqm-wasm/workflows/Tests/badge.svg?branch=master)](https://github.com/intgr/uqm-wasm/actions?query=workflow:Tests)
+[![Build status](https://github.com/intgr/uqm-wasm/workflows/Build/badge.svg?branch=master)](https://github.com/intgr/uqm-wasm/actions?query=workflow:Build)
 
 This is a fork of Star Control 2: The Ur-Quan Masters to WebAssembly
 for running in web browsers, using the Emscripten toolchain.
