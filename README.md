@@ -75,3 +75,12 @@ You can clean and force a re-build of emscripten-ports with:
 
     emcc --clear-cache
     emcc -c -E - -s USE_ZLIB=1 -s USE_LIBPNG=1 -s USE_VORBIS=1 -s USE_SDL=2 -s ASYNCIFY -pthread </dev/null
+
+Credits
+-------
+
+* Thanks to Fred Ford, Paul Reiche III and Toys for Bob for releasing the game as open source.
+* Thanks to The Ur-Quan Masters port team for their work on the open source project.
+* Thanks to Michael Martin for continuing to maintain the game for the last several years.
+* WebAssembly port was done by Marti Raudsepp.
+* [Detailed credits](./sc2/AUTHORS)

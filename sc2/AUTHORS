@@ -63,6 +63,7 @@ Other contributions (in alphabetical order):
     Mike Melanson (ADPCM basis from FFmpeg used for DUK audio)
     Brian Rogers <burpmaster@truffula.net>
     Horatiu Romosan <hory@post.ro> (v0.1 Win32 installer)
+    Marti Raudsepp <marti@juffo.org> (WebAssembly port)
 
 Third party libraries:
     Simple Directmedia Layer (SDL) by Sam Lantinga et al.
