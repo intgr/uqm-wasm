@@ -227,11 +227,11 @@ mkdirhier() {
 # $3 - Mode of destination file/directory
 # $4 - Owner of destination file/directory
 installsome() {
-	local SRC DEST MODE OWNDER DESTDIR SRCNAME
+	local SRC DEST MODE OWNER DESTDIR SRCNAME
 	SRC="$1"
 	DEST="$2"
 	MODE="$3"
-	OWNDER="$4"
+	OWNER="$4"
 
 	DESTDIR="${DEST%/*}"
 	if [ ! -d "$DESTDIR" ]; then
