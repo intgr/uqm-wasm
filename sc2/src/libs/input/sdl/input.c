@@ -361,10 +361,9 @@ is_numpad_char_event (const SDL_Event *Event)
 {
 	return in_character_mode &&
 			(Event->type == SDL_KEYDOWN || Event->type == SDL_KEYUP) &&
-			(Event->key.keysym.mod & KMOD_NUM) &&  /* NumLock is ON */
 			Event->key.keysym.unicode > 0 &&       /* Printable char */
 			Event->key.keysym.sym >= SDLK_KP0 &&   /* Keypad key */
-			Event->key.keysym.sym <= SDLK_KP_PLUS;
+			Event->key.keysym.sym <= SDLK_KP_PERIOD;
 }
 
 void
@@ -427,6 +426,17 @@ ProcessInputEvent (const SDL_Event *Event)
 	}
 }
 #else
+static inline int
+is_numpad_char_event (const SDL_Event *Event)
+{
+	return in_character_mode &&
+			(Event->type == SDL_KEYDOWN || Event->type == SDL_KEYUP) &&
+			(Event->key.keysym.mod & KMOD_NUM) &&  /* Numlock on */
+			Event->key.keysym.sym >= SDLK_KP_1 &&  /* Keypad key */
+			Event->key.keysym.sym <= SDLK_KP_PERIOD;
+	/* Note that in the SDL2 enumeration 0 comes after 9 and before period */
+}
+
 void
 ProcessInputEvent (const SDL_Event *Event)
 {
@@ -447,8 +457,10 @@ ProcessInputEvent (const SDL_Event *Event)
 		SDL_StopTextInput ();
 	}
 
-	/* TODO: Block numpad input when NUM_LOCK is on */
-	VControl_HandleEvent (Event);
+	if (!is_numpad_char_event(Event))
+	{
+		VControl_HandleEvent (Event);
+	}
 
 	if (Event->type == SDL_TEXTINPUT)
 	{
