@@ -1,3 +1,6 @@
+Progress to next release:
+- Upgrade internal libmikmod to 3.3.11.1, for Aarch64 support - McMartin
+
 0.8:
 - Grouping ship properties together at the top of the ship .c files, from
   oldlaptop.
