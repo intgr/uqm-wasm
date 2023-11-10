@@ -31,6 +31,9 @@
 #ifdef uio_MEM_DEBUG
 #	include "memdebug.h"
 #endif
+#ifdef EMSCRIPTEN
+#	include "emscripten.h"
+#endif
 
 #define uio_Stream_BLOCK_SIZE 1024
 
@@ -114,8 +117,20 @@ uio_fopen(uio_DirHandle *dir, const char *path, const char *mode) {
 
 int
 uio_fclose(uio_Stream *stream) {
-	if (stream->operation == uio_StreamOperation_write)
+	if (stream->operation == uio_StreamOperation_write) {
 		uio_Stream_flushWriteBuffer(stream);
+#ifdef EMSCRIPTEN
+		MAIN_THREAD_EM_ASM(
+			FS.syncfs( /*populate=*/ false, err => {
+				if (err)
+					throw err;
+				else {
+					console.log("FS Synced");
+				}
+			})
+		);
+#endif
+	}
 	uio_close(stream->handle);
 	uio_Stream_delete(stream);
 	return 0;

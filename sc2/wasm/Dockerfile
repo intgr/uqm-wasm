@@ -2,8 +2,7 @@
 # docker build --tag=uqm-wasm -f wasm/Dockerfile .
 # docker run -it --rm -p9999:9999 uqm-wasm
 
-# Pin to emsdk 3.0 due to https://github.com/emscripten-core/emscripten/issues/19410#issuecomment-1776096113
-FROM emscripten/emsdk:3.0.1
+FROM emscripten/emsdk:3.1.47
 RUN apt-get update && \
     apt-get install -y python-is-python3 nginx && \
     rm -rf /var/lib/apt/lists/*
@@ -13,13 +12,13 @@ RUN emcc -c -E - -s USE_ZLIB=1 -s USE_LIBPNG=1 -s USE_VORBIS=1 -s USE_SDL=2 -s A
 COPY build ./build
 COPY src ./src
 COPY Make* build.sh build.vars.in ./
+COPY wasm ./wasm
 
 RUN emconfigure ./build.sh uqm config
 
 COPY content ./content
 RUN ./build.sh uqm -j$(nproc) && \
     rm -rf obj
-COPY wasm ./wasm
 RUN ls -lah uqm-debug.wasm uqm-debug.data
 
 CMD nginx -p $PWD -c wasm/nginx.conf
