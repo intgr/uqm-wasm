@@ -22,15 +22,9 @@ jobs:
       - name: Build with Emscripten
         run: |
           cd sc2
-          docker build --tag=uqm-wasm -f wasm/Dockerfile . \
-            --build-arg BUILDKIT_INLINE_CACHE=1 \
-            --cache-from=ghcr.io/intgr/uqm-wasm:latest
+          docker build --tag=uqm-wasm -f wasm/Dockerfile .
       - name: Compare detected configuration
         run: |
           cd sc2
           docker run --rm uqm-wasm grep CHOICE config.state \
             |diff -us --color=always wasm/config.state.expected -
-      - name: Push build cache
-        run: |
-          docker tag uqm-wasm ghcr.io/intgr/uqm-wasm:latest
-          docker push ghcr.io/intgr/uqm-wasm:latest
