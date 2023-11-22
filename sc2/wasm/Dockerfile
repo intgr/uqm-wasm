@@ -2,7 +2,7 @@
 # docker build --tag=uqm-wasm -f wasm/Dockerfile .
 # docker run -it --rm -p9999:9999 uqm-wasm
 
-FROM emscripten/emsdk:3.1.47
+FROM emscripten/emsdk
 RUN apt-get update && \
     apt-get install -y python-is-python3 nginx && \
     rm -rf /var/lib/apt/lists/*
