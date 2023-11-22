@@ -125,7 +125,7 @@ uio_fclose(uio_Stream *stream) {
 				if (err)
 					throw err;
 				else {
-					console.log("FS Synced");
+					console.log("Saved files to browser IndexedDB.");
 				}
 			})
 		);
