@@ -9,7 +9,7 @@ Module["preRun"].push(function () {
             throw err;
         else {
             removeRunDependency('syncfs')
-            console.log("FS Synced")
+            console.log("Loaded files from browser IndexedDB.")
         }
     });
 });
