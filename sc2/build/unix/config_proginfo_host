@@ -115,7 +115,7 @@ case "$HOST_SYSTEM" in
 		;;
 	Emscripten)
 		LIB_libpng_CFLAGS="-s USE_LIBPNG=1"
-		LIB_libpng_LDFLAGS="-lpng"
+		LIB_libpng_LDFLAGS="-lpng-mt"
 		;;
 	*)
 		LIB_libpng_CFLAGS=""
