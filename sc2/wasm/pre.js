@@ -1,4 +1,5 @@
 Module.preRun ||= [];
+
 Module.preRun.push(function () {
     window.wasm_syncfs = () => {
         FS.syncfs( /*populate=*/ false, err => {
@@ -18,8 +19,8 @@ Module.preRun.push(function () {
         if (err) {
             alert("Populating from IndexedDB failed, saved game & preferences will not be persistent.");
         } else {
-            removeRunDependency("syncfs")
-            console.log("Loaded files from browser IndexedDB.")
+            removeRunDependency("syncfs");
+            console.log("Loaded files from browser IndexedDB.");
         }
     });
 });
