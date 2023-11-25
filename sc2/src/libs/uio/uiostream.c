@@ -120,15 +120,7 @@ uio_fclose(uio_Stream *stream) {
 	if (stream->operation == uio_StreamOperation_write) {
 		uio_Stream_flushWriteBuffer(stream);
 #ifdef EMSCRIPTEN
-		MAIN_THREAD_EM_ASM(
-			FS.syncfs( /*populate=*/ false, err => {
-				if (err)
-					throw err;
-				else {
-					console.log("Saved files to browser IndexedDB.");
-				}
-			})
-		);
+		MAIN_THREAD_EM_ASM(wasm_syncfs());
 #endif
 	}
 	uio_close(stream->handle);
