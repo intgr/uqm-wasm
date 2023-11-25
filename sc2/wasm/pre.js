@@ -10,15 +10,15 @@ Module.preRun.push(function () {
         });
     };
 
-    addRunDependency('syncfs');
+    addRunDependency("syncfs");
 
-    FS.mkdir('/home/web_user/.uqm');
-    FS.mount(IDBFS, {}, '/home/web_user/.uqm')
+    FS.mkdir("/home/web_user/.uqm");
+    FS.mount(IDBFS, {}, "/home/web_user/.uqm");
     FS.syncfs( /*populate=*/ true, err => {
-        if (err)
-            throw err;
-        else {
-            removeRunDependency('syncfs')
+        if (err) {
+            alert("Populating from IndexedDB failed, saved game & preferences will not be persistent.");
+        } else {
+            removeRunDependency("syncfs")
             console.log("Loaded files from browser IndexedDB.")
         }
     });
