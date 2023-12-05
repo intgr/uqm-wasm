@@ -4,7 +4,7 @@ Module.preRun.push(function () {
     window.wasm_syncfs = () => {
         FS.syncfs( /*populate=*/ false, err => {
             if (err) {
-                alert("Saving to IndexedDB failed, saved game & preferences will not be persistent.");
+                alert("Saving to IndexedDB failed, saved game & preferences will not be persistent.\n" + err);
             } else {
                 console.log("Saved files to browser IndexedDB.");
             }
