@@ -21,7 +21,7 @@ Module.preRun.push(() => {
     window.wasm_syncfs = () => {
         FS.syncfs( /*populate=*/ false, err => {
             if (err) {
-                alert("Saving to IndexedDB failed, saved games & preferences will not be persistent.\n" + err);
+                alert("Saving to IndexedDB failed, saved game & preferences will not be persistent.\n" + err);
             } else {
                 console.log("Saved files to browser IndexedDB.");
             }
@@ -29,7 +29,7 @@ Module.preRun.push(() => {
 
         if (!persistRequested) {
             requestPersistentStorage().catch(err => {
-                alert("Warning: Browser may delete saved games & preferences after inactivity.\n" + err);
+                alert("Warning: Browser may delete saved game & preferences after inactivity.\n" + err);
             });
             persistRequested = true;
         }
