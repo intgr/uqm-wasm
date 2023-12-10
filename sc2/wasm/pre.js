@@ -1,6 +1,6 @@
 Module.preRun ||= [];
 
-Module.preRun.push(() => {
+Module.preRun.push(function () {
     let persistRequested = false;
 
     function requestPersistentStorage() {
