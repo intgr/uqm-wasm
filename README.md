@@ -6,9 +6,14 @@ Star Control 2: The Ur-Quan Masters port to WebAssembly
 This is a fork of Star Control 2: The Ur-Quan Masters to WebAssembly
 for running in web browsers, using the Emscripten toolchain.
 
-Beware! In the WebAssembly build, **saved games are not** persistent, and the
-game has not received much testing. It is not fit for a full play-through, but
-currently merely a toy project.
+Save games and preferences are persisted on client-side using browser IndexedDB
+API (Emscripten IDBFS). Persistent storage will be requested when you save a
+game or change preferences. If persistent storage is unavailable, storage is on
+a best-effort basis; a warning message will be shown in this case.
+On Chrome and Safari, the website needs to be bookmarked enable persistent
+storage.
+[Read more about persistence](https://developer.mozilla.org/en-US/docs/Web/API/Storage_API/Storage_quotas_and_eviction_criteria#does_browser-stored_data_persist)
+
 
 Building in Docker
 ------------------
@@ -64,7 +69,6 @@ Then open in your web browser: http://localhost:9999/uqm-debug.html
 
 Known issues
 ------------
-* Gameplay: No support for persistent saved games.
 * Audio: Firefox doesn't play some samples (e.g. menu ping), but works in Chrome
 * Audio: MixSDL does not work (OpenAL works)
 * Threading: SDL threading does not work (pthreads work)
