@@ -29,7 +29,7 @@ Module.preRun.push(() => {
 
         if (!persistRequested) {
             requestPersistentStorage().catch(err => {
-                alert("Warning: Browser may delete saved game & preferences after inactivity.\n" + err);
+                alert("Warning: Browser may delete saved games & preferences after inactivity.\n" + err);
             });
             persistRequested = true;
         }
@@ -41,7 +41,7 @@ Module.preRun.push(() => {
     FS.mount(IDBFS, {}, "/home/web_user/.uqm");
     FS.syncfs( /*populate=*/ true, err => {
         if (err) {
-            alert("Populating from IndexedDB failed, saved games & preferences will not be persistent.\n" + err);
+            alert("Populating from IndexedDB failed, saved game & preferences will not be persistent.\n" + err);
         } else {
             removeRunDependency("syncfs");
             console.log("Loaded files from browser IndexedDB.");
