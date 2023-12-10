@@ -1,6 +1,23 @@
 Module.preRun ||= [];
 
 Module.preRun.push(function () {
+    let persistRequested = false;
+
+    function requestPersistentStorage() {
+        if (navigator.storage && navigator.storage.persist) {
+            return navigator.storage.persist().then(isPersisted => {
+                if (isPersisted) {
+                    console.log("Persistent storage request was accepted.");
+                } else {
+                    throw "Persistent storage request was rejected.";
+                }
+            });
+        } else {
+            return Promise.reject("Persistent storage not supported by browser.");
+        }
+    }
+
+    // Called from C code: uio_fclose()
     window.wasm_syncfs = () => {
         FS.syncfs( /*populate=*/ false, err => {
             if (err) {
@@ -9,6 +26,13 @@ Module.preRun.push(function () {
                 console.log("Saved files to browser IndexedDB.");
             }
         });
+
+        if (!persistRequested) {
+            requestPersistentStorage().catch(err => {
+                alert("Warning: Browser may delete saved games & preferences after inactivity.\n" + err);
+            });
+            persistRequested = true;
+        }
     };
 
     addRunDependency("syncfs");
